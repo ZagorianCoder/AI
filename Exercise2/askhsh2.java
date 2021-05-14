@@ -546,6 +546,7 @@ public class askhsh2 {
         for (NodeArch fn : allNodes) {
             
             if (current_lvl != fn.getLVL()) {
+                current_lvl = fn.getLVL();
                 System.out.println("\n\n");
                 System.out.println("______LVL " + fn.getLVL() + "________");
                 System.out.print(fn.getName() + "    ");
