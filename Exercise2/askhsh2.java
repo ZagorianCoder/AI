@@ -381,7 +381,7 @@ class MiniMax{
             
         }else{
             
-            finalStates.add(s);
+            finalStates.add(s.getState_origin());
             return;
             
         }
@@ -452,7 +452,7 @@ class MiniMax{
                     state.setScore(1);
                     
                 }else{
-    
+                    //System.out.println("Player wins");
                     state.setScore(-1);
                     
                 }
