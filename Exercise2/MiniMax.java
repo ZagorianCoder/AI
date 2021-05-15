@@ -63,10 +63,123 @@ class Moves{
         
     }
     
+    
+    private static boolean up(NodeArch s) {
+        
+        next_i = s.getCoord_i() - 1;
+        next_j = s.getCoord_j();
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+        
+    }
+    
+    private static boolean down(NodeArch s) {
+
+        next_i = s.getCoord_i() + 1;
+        next_j = s.getCoord_j();
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+        
+    }
+    
+    private static boolean left(NodeArch s) {
+        
+        next_i = s.getCoord_i();
+        next_j = s.getCoord_j() - 1;
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+        
+    }
+    
+    private static boolean right(NodeArch s) {
+        
+        next_i = s.getCoord_i();
+        next_j = s.getCoord_j() + 1;
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+    }
+    
+    private static boolean upMainDiag(NodeArch s) {
+        
+        next_i = s.getCoord_i() - 1;
+        next_j = s.getCoord_j() - 1;
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+        
+    }
+    
+    private static boolean downMainDiag(NodeArch s) {
+        
+        next_i = s.getCoord_i() + 1;
+        next_j = s.getCoord_j() + 1;
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+        
+    }
+    
+    private static boolean upSeconDiag(NodeArch s) {
+        
+        next_i = s.getCoord_i() - 1;
+        next_j = s.getCoord_j() + 1;
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+        
+    }
+    
+    private static boolean downSeconDiag(NodeArch s) {
+        
+        next_i = s.getCoord_i() + 1;
+        next_j = s.getCoord_j() - 1;
+        
+        return canExpand(s, next_i, next_j, s.getPrevious_moves());
+        
+        
+    }
+    
+    private static boolean canExpand(NodeArch s, int i, int j, String[][] moves) {
+        
+        if (isvalid(i, j, moves)){
+            
+            expandtoNextState(s, new String[4][4],next_i, next_j);
+            return true;
+            
+        }
+        return false;
+        
+    }
+    
+    private static boolean isvalid(int i, int j, String[][] moves) {
+        
+        if (i >= 0 && i < moves.length && j >= 0 && j < moves.length) {
+            
+            if (moves[i][j].equals("PC") || moves[i][j].equals("PL1")) {
+                
+                return false;
+                
+            }
+            
+        }else{
+            return false;
+        }
+        return true;
+        
+    }
+    
+    private static void expandtoNextState(NodeArch s, String[][] updated_pm,int newPos_row, int newPos_column){
+        
+        update_previousMoves(s, s.getPrevious_moves(), updated_pm,  newPos_row, newPos_column);
+        
+        NodeArch new_state = new NodeArch(newPos_row, newPos_column, s.getRival_coord_i(), s.getRival_coord_j(), updated_pm, new ArrayList<NodeArch>(), s.getState_origin(), s.getLVL() + 1);
+        new_state.setName(s.getName());
+        s.getNext_states().add(new_state);
+        testMiniMax.allNodes.add(new_state);
+        
+    }
+    
     private static void update_previousMoves(NodeArch s, String[][] outdated_matrix, String[][] updated_matrix, int pos_row, int pos_column) {
         
         for (int i = 0; i < updated_matrix.length; i++) {
-
+    
             for (int k = 0; k < updated_matrix.length; k++) {
                 
                 updated_matrix[i][k] = outdated_matrix[i][k];
@@ -78,146 +191,7 @@ class Moves{
         
     }
 
-    private static void expandtoNextState(NodeArch s, String[][] updated_pm,int newPos_row, int newPos_column){
-        
-        update_previousMoves(s, s.getPrevious_moves(), updated_pm,  newPos_row, newPos_column);
-
-        NodeArch new_state = new NodeArch(newPos_row, newPos_column, s.getRival_coord_i(), s.getRival_coord_j(), updated_pm, new ArrayList<NodeArch>(), s.getState_origin(), s.getLVL() + 1);
-        new_state.setName(s.getName());
-        s.getNext_states().add(new_state);
-        
-        
-    }
-    
-    private static boolean up(NodeArch s) {
-
-        next_i = s.getCoord_i() - 1;
-        next_j = s.getCoord_j();
-        String[][] pm = s.getPrevious_moves();
-        if (next_i < 0 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")) {
-            
-
-            return false;
-            
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);
-        return true;
-    }
-    
-    private static boolean down(NodeArch s) {
-
-        next_i = s.getCoord_i() + 1;
-        next_j = s.getCoord_j();
-        String[][] pm = s.getPrevious_moves();
-        
-        if (next_i > 2 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")) {
-            
-
-            return false;
-            
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);;
-        return true;
-    }
-    
-    private static boolean left(NodeArch s) {
-
-        next_i = s.getCoord_i();
-        next_j = s.getCoord_j() - 1;
-
-        String[][] pm = s.getPrevious_moves();
-        if (next_j < 0 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")){
-
-            return false;
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);
-        return true;
-    }
-    
-    private static boolean right(NodeArch s) {
-        
-        next_i = s.getCoord_i();
-        next_j = s.getCoord_j() + 1;
-        String[][] pm = s.getPrevious_moves();
-        if (next_j > 2 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")) {
-            
-
-            return false;
-            
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);
-        return true;
-    }
-    
-    private static boolean upMainDiag(NodeArch s) {
-        //code
-        next_i = s.getCoord_i() - 1;
-        next_j = s.getCoord_j() - 1;
-        String[][] pm = s.getPrevious_moves();
-        if (next_i < 0 || next_j < 0 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")) {
-
-
-            return false;
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);
-        return true;
-        
-    }
-    
-    private static boolean downMainDiag(NodeArch s) {
-        //code
-        next_i = s.getCoord_i() + 1;
-        next_j = s.getCoord_j() + 1;
-        String[][] pm = s.getPrevious_moves();
-        if (next_i > 2 || next_j > 2 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")) {
-            
-
-            return false;
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);
-        return true;
-        
-    }
-    
-    private static boolean upSeconDiag(NodeArch s) {
-        //code
-        next_i = s.getCoord_i() - 1;
-        next_j = s.getCoord_j() + 1;
-        String[][] pm = s.getPrevious_moves();
-        if (next_i < 0 || next_j > 2 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")) {
-            
-
-            return false;
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);
-        return true;
-
-    }
-    
-    private static boolean downSeconDiag(NodeArch s) {
-        
-        next_i = s.getCoord_i() + 1;
-        next_j = s.getCoord_j() - 1;
-        String[][] pm = s.getPrevious_moves();
-        if (next_i > 2 || next_j < 0 || pm[next_i][next_j].equals("PC") || pm[next_i][next_j].equals("PL1")) {
-            
-
-            return false;
-        }
-
-        expandtoNextState(s, new String[3][3],next_i, next_j);
-        return true;
-        
-    }
-    
-}
+}    
 
 public class MiniMax{
     
