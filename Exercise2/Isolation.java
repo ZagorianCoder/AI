@@ -21,6 +21,7 @@ public class Isolation {
         System.out.println("Player1's Turn!\nInsert the coordinates of your next move.");
         getPlayerMove();
         pc = getPCstartingPos();
+        pc.setName("PC");
         pc.setState_origin(pc);
         System.out.println("Player1 staring at (" + playerPOSX + "," + playerPOSY + ")\n");
         System.out.println("opponentAI starting at (" + pc.getCoord_i() + "," + pc.getCoord_j() + ")\n");
@@ -61,7 +62,8 @@ public class Isolation {
             }
             //print new state of board
             System.out.println("Player1 moves to (" + playerPOSX + "," + playerPOSY + ")\n");
-            if (computersTurn(pc)) {
+
+            if (computersTurn()) {
                 
                 System.out.println("Player1 wins\nCongrats game finished");
                 return;
@@ -86,10 +88,11 @@ public class Isolation {
 
     private static void getPlayerMove() {
         
-        boolean isValidMove = true;
+        boolean isValidMove;
         
         do {
             
+            isValidMove = true;
             System.out.print("x: ");
             playerPOSX = input.nextInt();
             System.out.print("\ny: ");
@@ -120,10 +123,10 @@ public class Isolation {
     
     private static NodeArch getPCstartingPos(){
         
-        //Random handler = new Random();
-        int computerPOSX = 1;
-        int computerPOSY = 2;
-        /*try {
+        Random handler = new Random();
+        int computerPOSX = 0;
+        int computerPOSY = 0;
+        try {
             
             computerPOSX = handler.nextInt(4);
             computerPOSY= handler.nextInt(4);
@@ -137,26 +140,26 @@ public class Isolation {
             
             getPCstartingPos();
             
-        }*/
+        }
         black_squares[computerPOSX][computerPOSY] = "PC";
         return new NodeArch(computerPOSX, computerPOSY, playerPOSX, playerPOSY, black_squares, new ArrayList<NodeArch>(), null, 0);
         
     }
     
 
-    private static boolean computersTurn(NodeArch pc) {
+    private static boolean computersTurn() {
 
         if (CanMove.decide(pc.getCoord_i(), pc.getCoord_j())) {
             
             System.out.println("opponentAI Turn");
             
             MiniMax.driver(pc);
-    
+            
             black_squares[pc.getNext_move().getCoord_i()][pc.getNext_move().getCoord_j()] = "PC";
     
             pc = new NodeArch(pc.getNext_move().getCoord_i(), pc.getNext_move().getCoord_j(),  pc.getNext_move().getRival_coord_i(), pc.getNext_move().getRival_coord_j(), black_squares, new ArrayList<NodeArch>(), null, 0);
-            pc.setState_origin(pc);
             pc.setName("PC");
+            pc.setState_origin(pc);
             return false;
 
         }
