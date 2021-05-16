@@ -58,12 +58,23 @@ public class Isolation {
             
             if (playersTurn()) {
 
+                if (!CanMove.decide(pc.getCoord_i(), pc.getCoord_j())) {
+
+                    System.out.println("IT'S A DRAW! GAME OVER!");
+                    return;
+                }
                 System.out.println("opponentAI wins\nGAME OVER!!");
                 return;
             }
             System.out.println("Player1 moves to (" + playerPOSX + "," + playerPOSY + ")\n");
             
             if (computersTurn()) {
+
+                if (!CanMove.decide(playerPOSX, playerPOSY)) {
+
+                    System.out.println("IT'S A DRAW! GAME OVER!");
+                    return;
+                }
                 
                 System.out.println("Player1 wins\nCongrats game finished");
                 return;
