@@ -97,6 +97,7 @@ class Moves{
         next_j = s.getCoord_j() + 1;
         
         return canExpand(s, next_i, next_j, s.getPrevious_moves());
+
     }
     
     private static boolean upMainDiag(NodeArch s) {
@@ -148,7 +149,7 @@ class Moves{
         
     }
     
-    private static boolean isvalid(int i, int j, String[][] moves) {
+    public static boolean isvalid(int i, int j, String[][] moves) {
         
         if (i >= 0 && i < moves.length && j >= 0 && j < moves.length) {
             
@@ -159,7 +160,9 @@ class Moves{
             }
             
         }else{
+
             return false;
+
         }
         return true;
         
@@ -168,11 +171,9 @@ class Moves{
     private static void expandtoNextState(NodeArch s, String[][] updated_pm,int newPos_row, int newPos_column){
         
         update_previousMoves(s, s.getPrevious_moves(), updated_pm,  newPos_row, newPos_column);
-        
         NodeArch new_state = new NodeArch(newPos_row, newPos_column, s.getRival_coord_i(), s.getRival_coord_j(), updated_pm, new ArrayList<NodeArch>(), s.getState_origin(), s.getLVL() + 1);
         new_state.setName(s.getName());
         s.getNext_states().add(new_state);
-        testMiniMax.allNodes.add(new_state);
         
     }
     
@@ -187,6 +188,7 @@ class Moves{
             }
         }
         updated_matrix[pos_row][pos_column] = s.getName();
+        
         
         
     }
@@ -222,7 +224,14 @@ public class MiniMax{
             
         }else{
             
-            finalStates.add(s.getState_origin());
+            if (isDraw.decide(s.getState_origin().getCoord_i(), s.getState_origin().getCoord_j(), s.getState_origin().getPrevious_moves())) {
+
+                s.getState_origin().setScore(0);
+                
+            } else {
+                
+                finalStates.add(s.getState_origin());
+            }
             return;
             
         }
@@ -246,8 +255,15 @@ public class MiniMax{
             evaluate(s.getNext_states());
             
         }else{
-            
-            finalStates.add(s.getState_origin());
+
+            if (isDraw.decide(s.getState_origin().getCoord_i(), s.getState_origin().getCoord_j(), s.getState_origin().getPrevious_moves())) {
+
+                s.getState_origin().setScore(0);
+                
+            } else {
+                
+                finalStates.add(s.getState_origin());
+            }
             return;
             
         }
@@ -334,6 +350,157 @@ public class MiniMax{
         
         origin_state.setScore(max_score);
         origin_state.setNext_move(max_state);
+        
+    }
+    
+}
+
+class isDraw{
+    
+    
+    public static boolean decide(int current_posX, int current_posY, String[][] moves)  {
+        
+        int unavailable_moves = 0;
+        
+        if (!canUp(current_posX, current_posY, moves)){
+            
+            unavailable_moves += 1;
+            
+        }
+        if(!canDown(current_posX, current_posY, moves)){
+            
+            unavailable_moves += 1;
+            
+        }
+        if(!canLeft(current_posX, current_posY, moves)){
+            
+            unavailable_moves += 1;
+            
+        }
+        if(!canRight(current_posX, current_posY, moves)){
+            
+            unavailable_moves += 1;
+            
+        }
+        if(!canUpMainDiag(current_posX, current_posY, moves)){
+            
+            unavailable_moves += 1;
+            
+        }
+        if (!canDownMainDiag(current_posX, current_posY, moves)) {
+            
+            unavailable_moves += 1;
+            
+        }
+        if (!canUpSeconDiag(current_posX, current_posY, moves)) {
+            
+            unavailable_moves += 1;
+            
+        }
+        if (!canDownSeconDiag(current_posX, current_posY, moves)) {
+            
+            unavailable_moves += 1;
+            
+        }
+        if (unavailable_moves == 8) {
+            
+            
+            return true;
+            
+        }
+        return false;
+        
+    }
+
+    private static boolean canUp(int current_posX, int current_posY, String[][] moves) {
+        
+        int next_posx = current_posX - 1;
+        int next_posy = current_posY;
+        
+        return isvalid(next_posx, next_posy, moves);
+
+    }
+    
+    private static boolean canDown(int current_posX, int current_posY, String[][] moves) {
+
+
+        
+        int next_posx = current_posX + 1;
+        int next_posy = current_posY;
+        
+        return isvalid(next_posx, next_posy, moves);
+    }
+    
+    private static boolean canLeft(int current_posX, int current_posY, String[][] moves) {
+
+        int next_posx = current_posX;
+        int next_posy = current_posY - 1;
+        
+        return isvalid(next_posx, next_posy, moves);
+        
+    }
+    
+    private static boolean canRight(int current_posX, int current_posY, String[][] moves) {
+        
+        int next_posx = current_posX;
+        int next_posy = current_posY + 1;
+        
+        return isvalid(next_posx, next_posy, moves);
+
+    }
+    
+    private static boolean canUpMainDiag(int current_posX, int current_posY, String[][] moves) {
+
+        int next_posx = current_posX - 1;
+        int next_posy = current_posY - 1;
+        
+        return isvalid(next_posx, next_posy, moves);
+        
+    }
+    
+    private static boolean canDownMainDiag(int current_posX, int current_posY, String[][] moves) {
+
+        int next_posx = current_posX + 1;
+        int next_posy = current_posY + 1;
+        
+        return isvalid(next_posx, next_posy, moves);
+        
+    }
+    
+    private static boolean canUpSeconDiag(int current_posX, int current_posY, String[][] moves) {
+
+        int next_posx = current_posX - 1;
+        int next_posy = current_posY + 1;
+        
+        return isvalid(next_posx, next_posy, moves);
+
+    }
+    
+    private static boolean canDownSeconDiag(int current_posX, int current_posY, String[][] moves) {
+        
+        int next_posx = current_posX + 1;
+        int next_posy = current_posY - 1;
+        
+        return isvalid(next_posx, next_posy, moves);
+        
+    }
+
+    private static boolean isvalid(int i, int j, String[][] moves) {
+        
+        if (i >= 0 && i < moves.length && j >= 0 && j < moves.length) {
+            
+            if (moves[i][j].equals("PC") || moves[i][j].equals("PL1")) {
+                
+                return false;
+                
+            }
+            
+        }else{
+
+            return false;
+
+        }
+        return true;
         
     }
     

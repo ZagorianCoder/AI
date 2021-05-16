@@ -25,6 +25,7 @@ public class Isolation {
         pc.setState_origin(pc);
         System.out.println("Player1 staring at (" + playerPOSX + "," + playerPOSY + ")\n");
         System.out.println("opponentAI starting at (" + pc.getCoord_i() + "," + pc.getCoord_j() + ")\n");
+        printBoard();
         startGame();
         
         
@@ -60,16 +61,15 @@ public class Isolation {
                 System.out.println("opponentAI wins\nGAME OVER!!");
                 return;
             }
-            //print new state of board
             System.out.println("Player1 moves to (" + playerPOSX + "," + playerPOSY + ")\n");
-
+            
             if (computersTurn()) {
                 
                 System.out.println("Player1 wins\nCongrats game finished");
                 return;
             }
-            //print new state of board
             System.out.println("opponentAI moves to (" + pc.getCoord_i() + "," + pc.getCoord_j() + ")\n");
+            printBoard();
         }
     }
     
@@ -151,8 +151,6 @@ public class Isolation {
 
         if (CanMove.decide(pc.getCoord_i(), pc.getCoord_j())) {
             
-            System.out.println("opponentAI Turn");
-            
             MiniMax.driver(pc);
             
             black_squares[pc.getNext_move().getCoord_i()][pc.getNext_move().getCoord_j()] = "PC";
@@ -165,6 +163,21 @@ public class Isolation {
         }
         return true;
 
+    }
+
+    private static void printBoard() {
+
+        
+        System.out.println("\n_______________BOARD STATE_______________\n");
+        for (int i = 0; i < black_squares.length; i++) {
+            
+            for (int j = 0; j < black_squares.length; j++) {
+                
+                System.out.print(black_squares[i][j] + "      ");
+
+            }
+            System.out.println("\n\n");
+        }
     }
     
     
